@@ -1,0 +1,16 @@
+version: "3"
+services:
+  db:
+    image: "postgres:9.5"
+    environment:
+      POSTGRES_USER: odoo
+      POSTGRES_PASSWORD: postgres
+  odoo:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8069:8069
+    depends_on:
+      - db
+    command: ["./wait-for.sh", "db:5432", "--", "./odoo-bin", "--addons-path", "addons", "-w", "postgres", "-r", "odoo", "--db-filter", "odoo$$", "--db_host", "db", "--database", "odoo", "-i", "base"]
